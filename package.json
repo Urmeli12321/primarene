@@ -1,0 +1,17 @@
+{
+  "name": "primarene",
+  "version": "1.0.0",
+  "description": "Bot von Urmeli12321",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Urmeli12321",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^11.4.2",
+    "ffmpeg-binaries": "^3.2.2",
+    "opusscript": "0.0.6"
+  },
+  "devDependencies": {}
+}
