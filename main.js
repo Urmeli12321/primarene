@@ -234,4 +234,4 @@ if(message.content.startsWith(`${BotSettings.prefix}ban`)) {
 });
 
 
-bot.login(BotSettings.token)
+bot.login(process.env.BOT_TOKEN)
