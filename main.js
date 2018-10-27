@@ -12,7 +12,7 @@ const Discord = require("discord.js"),
         type: "PLAYING" //PLAYING, STREAMING, LISTENING, WATCHING
     })
     //Name + Avatar
-    // bot.user.setUsername("Bendy")
+    // bot.user.setUsername("")
     // bot.user.setAvatar("")
     });
 
@@ -187,4 +187,4 @@ const Discord = require("discord.js"),
 });
 
 
-bot.login(BotSettings.token)
+bot.login(process.env.BOT_TOKEN)
