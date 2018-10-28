@@ -275,4 +275,4 @@ if(message.content.startsWith(`${BotSettings.prefix}leave ${args.join(" ")}`)) {
 });
 
 
-bot.login(BotSettings.token)
+bot.login(process.env.BOT_TOKEN)
