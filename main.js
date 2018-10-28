@@ -110,7 +110,6 @@ bot.on("guildMemberAdd", async member => {
        }
        
        if(message.content == `${BotSettings.prefix}doggy`){
-           message.delete()
            message.send(`nein Böse :rage:`)
 
        }
