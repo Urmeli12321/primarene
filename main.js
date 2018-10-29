@@ -81,7 +81,7 @@ bot.on("guildMemberAdd", async member => {
                 .addField(`Help`, `Zeigt dir alle Befehle des Bots.`)
                 .addField(`botinfo`, `Gib dir wichtige Informationen über den Bot.`)
                 .addField(`youtube`,`sind paar youtuber die ${message.guild.member(BotSettings.OwnerID3).user.username}#${message.guild.member(BotSettings.OwnerID3).user.discriminator}`)
-                .addField(`Doggy`,`Ist böse`)
+                .addField(`Doggy`,`Ist Böse (work in prognes)`)
                 .addField(`würfel`,`Du bekommst eine random Zahl.`)
                 .addField(`kick`,"Für diesen Befehl wird ein Channel mit dem Namen `kick` gebraucht\nDamit kannst du Mitglieder kicken.")
                 .addField(`ban`,"Für diesen Befehl wird ein Channel mit dem Namen `ban` gebraucht\nDamit kannst du Mitglieder bannen.")
