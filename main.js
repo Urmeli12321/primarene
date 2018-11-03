@@ -25,6 +25,15 @@ const Discord = require("discord.js"),
     
 //Welcome Message
 bot.on("guildMemberAdd", async member => { 
+    if(member.guild.id == `508188197252104212`) {
+    bot.channels.get("508188197252104215").send(`${member} Willkommen auf dem ${member.guild.name} Server!`)
+
+    }
+    
+});
+
+//Welcome Message
+bot.on("guildMemberAdd", async member => { 
     if(member.guild.id == `505501196396789781`) {
     bot.channels.get("505504606684708910").send(`${member} Willkommen auf dem ${member.guild.name} Server!`)
 
