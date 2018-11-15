@@ -64,7 +64,7 @@ bot.on("guildMemberAdd", async member => {
 
 
         //Say-Command
-        if (command == "say") {
+        if (command == `${BotSettings.prefix}say`) {
             if (message.author.id == BotSettings.OwnerID || BotSettings.OwnerID2 || BotSettings.OwnerID3) {
                 var Say = args.join(" ")
                 if (Say) {
