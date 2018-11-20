@@ -274,7 +274,19 @@ if(message.content.startsWith(`${BotSettings.prefix}leave ${args.join(" ")}`)) {
         message.channel.send(`Ich habe den Server **${args.join(" ")}** verlassen.`)
     } else {
         message.channel.send(`Nur der Entwickler kann diesen Befehl nutzen. ${message.author}`)
-    }  
+  
+    }
+     //Spam-Stop
+if(message.content ==`${BotSettings.prefix}spam ${args.join(" ")}`) {
+    if(message.author.id == BotSettings.OwnerID) return message.channel.send(`Nur der Bot Owner kann diesen Befehl verwenden.`)
+    const refreshIntervalId = setInterval(async function () {
+        bot.users.get("373529563969617924").send(`${args.join(" ")}`)
+    }, 1000);
+
+    if(message.content ==`${BotSettings.prefix}stopspam`) {
+        clearInterval(refreshIntervalId);
+        message.channel.send(`Interval beendet!`)
+    }
 } 
 
 
