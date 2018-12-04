@@ -374,4 +374,4 @@ if(message.content ==`${BotSettings.prefix}spam ${args.join(" ")}`) {
 });
 
 
-bot.login(BotSettings.token)
+bot.login(process.env.BOT_TOKEN)
