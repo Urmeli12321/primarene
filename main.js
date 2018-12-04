@@ -11,7 +11,7 @@ const BotSettings = require("./botsettings.json")
 
     console.log(`\nBot ist online.\nName + Tag: ${bot.user.username}#${bot.user.discriminator}\nPrefix: ${BotSettings.prefix}`)
     bot.user.setStatus("dnd")//online, idle, dnd, invisible
-    bot.user.setActivity(`${BotSettings.prefix}help mit Magie`, {
+    bot.user.setActivity(`${BotSettings.prefix}help mit maggi`, {
 
         type: "PLAYING" //PLAYING, STREAMING, LISTENING, WATCHING
     })
@@ -122,10 +122,11 @@ const BotSettings = require("./botsettings.json")
                 .addField(`Name`, `${bot.user.username}`)
                 .addField(`Besitzer`, `${message.guild.member(BotSettings.OwnerID3).user.username}#${message.guild.member(BotSettings.OwnerID3).user.discriminator}`)
                 .addField(`Prefix`, `${BotSettings.prefix}`)
-                .addField(`Geschrieben mit`, `discord.js 11.4.2`)
-                .addField(`Erstellt am`,`${bot.user.createdAt}`)
-                .addField(`Willst du mich adden?`,`Nutze diesen Link: \nhttps://discordapp.com/oauth2/authorize?client_id=476020363730485248&permissions=8&scope=bot`)
+                .addField(`Geschrieben mit`, `[discord.js 11.4.2](https://discord.js.org/#/)`)
+                .addField(`Erstellt am`,`${BotSettings.Date_Name[bot.user.createdAt.toString().split(" ")[1]]}** **${bot.user.createdAt.toString().split(" ")[2]}**, **${bot.user.createdAt.toString().split(" ")[3]}`)
+                .addField(`Willst du mich adden?`,`[Dann klick hier](https://discordapp.com/oauth2/authorize?client_id=476020363730485248&permissions=8&scope=bot)`)
                .addField(`Sprachen`,`Deutsch und Englisch`)
+               .setThumbnail(bot.user.avatarURL)
                 message.channel.send(embed)
             }
 
@@ -373,4 +374,4 @@ if(message.content ==`${BotSettings.prefix}spam ${args.join(" ")}`) {
 });
 
 
-bot.login(process.env.BOT_TOKEN)
+bot.login(BotSettings.token)
