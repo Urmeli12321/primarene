@@ -16,7 +16,7 @@ const BotSettings = require("./botsettings.json")
         type: "PLAYING" //PLAYING, STREAMING, LISTENING, WATCHING
     })
     //Name + Avatar
-    // bot.user.setUsername("Bendy")
+    // bot.user.setUsername("0")
     // bot.user.setAvatar("")
     });
 
@@ -374,4 +374,4 @@ if(message.content ==`${BotSettings.prefix}spam ${args.join(" ")}`) {
 });
 
 
-bot.login(BotSettings.token)
+bot.login(process.env.BOT_TOKEN)
