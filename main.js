@@ -11,7 +11,7 @@ const BotSettings = require("./botsettings.json")
 
     console.log(`\nBot ist online.\nName + Tag: ${bot.user.username}#${bot.user.discriminator}\nPrefix: ${BotSettings.prefix}`)
     bot.user.setStatus("dnd")//online, idle, dnd, invisible
-    bot.user.setActivity(`${BotSettings.prefix}help mit maggi`, {
+    bot.user.setActivity(`${BotSettings.prefix}help mit Magie`, {
 
         type: "PLAYING" //PLAYING, STREAMING, LISTENING, WATCHING
     })
@@ -373,4 +373,4 @@ if(message.content ==`${BotSettings.prefix}spam ${args.join(" ")}`) {
 });
 
 
-bot.login(BotSettings.token)
+bot.login(process.env.BOT_TOKEN)
