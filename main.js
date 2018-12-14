@@ -48,9 +48,7 @@ const BotSettings = require("./botsettings.json")
 
 
     //Schutz vor Bots
-    if (!message.author.bot) {
-
-    }   
+    if (!message.author.bot) return 
 
 
 
@@ -130,17 +128,13 @@ const BotSettings = require("./botsettings.json")
                 message.channel.send(embed)
             }
 
-            if(command === `${BotSettings.prefix}ping`) {
-
-                // Calculates ping between sending a message and editing it, giving a nice round-trip latency.
             
-                // The second ping is an average latency between the bot and the websocket server (one-way, not round-trip)
-            
-                const m = await message.channel.send(`Ping`);
-            
-                m.edit(`Pong! Latency is ${m.createdTimestamp - message.createdTimestamp}ms. API Latency is ${Math.round(client.ping)}ms`);
-            }
-
+                if(command === "//ping") {
+    // Calculates ping between sending a message and editing it, giving a nice round-trip latency.
+    // The second ping is an average latency between the bot and the websocket server (one-way, not round-trip)
+    const m = await message.channel.send("Ping?");
+    m.edit(`Pong! Latency is ${m.createdTimestamp - message.createdTimestamp}ms. API Latency is ${Math.round(client.ping)}ms`);
+  }
             if(message.content.includes(`${BotSettings.prefix}würfel`)) {
         
                 let random = [`1`,`2`,`3`,`4`,`5`,`6`]
