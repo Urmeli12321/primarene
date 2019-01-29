@@ -311,4 +311,4 @@ if(message.content == `${BotSettings.prefix}hentai`){
     message.channel.send(chosen)
 
 }
-});bot.login(BotSettings.token)
+});bot.login(BOT_TOKEN)
