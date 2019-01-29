@@ -98,7 +98,7 @@ const BotSettings = require("./botsettings.json")
             var embed = new Discord.RichEmbed()
                  .setColor(`#3999`)
                  .setTitle(`hier sind paar youtuber`)
-                 .addField(`[Ikarusgaming](https://discordapp.com/oauth2/authorize?client_id=476020363730485248&permissions=8&scope=bot)`)
+                 .addField(`[Ikarusgaming](https://discordapp.com/oauth2/authorize?client_id=525663532398673950&permissions=8&scope=bot)`)
                  message.channel.send(embed)
              }
          
