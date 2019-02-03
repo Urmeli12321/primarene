@@ -309,6 +309,6 @@ if(message.content == `${BotSettings.prefix}hentai`){
     let chosen = random[Math.floor(Math.random() * random.length)];
 
     message.channel.send(chosen)
-
+        
 }
 });bot.login(BOT_TOKEN)
