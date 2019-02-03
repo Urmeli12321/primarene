@@ -311,4 +311,7 @@ if(message.content == `${BotSettings.prefix}hentai`){
     message.channel.send(chosen)
         
 }
+            if(message.content ==`${BotSettings.prefix}test`){
+                    message.reply(`test fehlgeschlagen`)
+            }
 });bot.login(BOT_TOKEN)
