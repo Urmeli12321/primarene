@@ -314,4 +314,4 @@ if(message.content == `${BotSettings.prefix}hentai`){
             if(message.content ==`${BotSettings.prefix}test`){
                     message.reply(`test fehlgeschlagen`)
             }
-});bot.login(BOT_TOKEN)
+});bot.login(process.env.BOT_TOKEN)
