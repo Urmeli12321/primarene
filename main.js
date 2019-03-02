@@ -338,4 +338,4 @@ if(message.content == `${BotSettings.pref}schokolade`){
     message.channel.send(`hier deine :chocolate_bar:`)
 }
 
-});bot.login(BotSettings.token)
+});bot.login(process.env.BOT_TOKEN)
