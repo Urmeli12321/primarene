@@ -29,7 +29,7 @@ const BotSettings = require("./botsettings.json")
     
     bot.on("guildMemberAdd", async member => { 
     if(member.guild.id == `531971237103140879`) {
-    bot.channels.get("557921976681758736").send(` Willkommen ${member} auf dem ${member.guild.name} Server! Lese bitte die #regeln durch`)
+    bot.channels.get("557921976681758736").send(` Willkommen ${member} auf dem ${member.guild.name} Server! Lese bitte die <@557922012186804243> durch`)
 
     }
     });
