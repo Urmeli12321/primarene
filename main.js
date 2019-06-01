@@ -78,7 +78,6 @@ const BotSettings = require("./botsettings.json")
         //Help
         if (message.content == `${BotSettings.prefix}help`) {
             var embed = new Discord.RichEmbed()
-
                 .setColor(`#a658e5`)
                 .setTitle("Hier siehst du alle Befehle des Bots")
                 .addField(`Help`, `Zeigt dir alle Befehle des Bots.`)
