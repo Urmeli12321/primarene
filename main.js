@@ -11,9 +11,9 @@ const BotSettings = require("./botsettings.json")
 
     console.log(`\nBot ist online.\nName + Tag: ${bot.user.username}#${bot.user.discriminator}\nPrefix: ${BotSettings.prefix}`)
     bot.user.setStatus("dnd")//online, idle, dnd, invisible
-    bot.user.setActivity(`${BotSettings.prefix}help mit maggi`, {
+    bot.user.setActivity(`${BotSettings.prefix}Alexi-chan ❤`, {
 
-        type: "PLAYING" //PLAYING, STREAMING, LISTENING, WATCHING
+        type: "WATCHING" //PLAYING, STREAMING, LISTENING, WATCHING
     })
     //Name + Avatar
     // bot.user.setUsername("Bendy")
