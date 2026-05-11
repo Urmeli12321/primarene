@@ -79,7 +79,7 @@ bot.on("messageCreate", async (message) => {
 
     // PING Command
     if (command === "ping") {
-        message.reply(`Pong! ${Math.round(bot.ws.ping)}ms`);
+        message.reply(`Pong! ${Math.round(bot.ping)}ms`);
     }
 
     // YOUTUBE Command
