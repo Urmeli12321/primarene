@@ -1,306 +1,323 @@
-const Discord = require("discord.js")
-const YTDL = require("ytdl-core")
-const commando = require("discord.js-commando")
-const Manager = new Discord.ShardingManager('./main.js');
-const yt = require("ytdl-core")
-const bot = new Discord.Client()
-const BotSettings = require("./botsettings.json")
+const { Client, GatewayIntentBits, EmbedBuilder, ChannelType, PermissionFlagsBits, Partials } = require("discord.js");
+const BotSettings = require("./botsettings.json");
 
-       //Start-Up
-        bot.on("ready", async () => {
+// Bot Client mit Intents erstellen
+const bot = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.GuildVoiceStates,
+    ],
+    partials: [Partials.Channel],
+});
 
-    console.log(`\nBot ist online.\nName + Tag: ${bot.user.username}#${bot.user.discriminator}\nPrefix: ${BotSettings.prefix}`)
-    bot.user.setStatus("dnd")//online, idle, dnd, invisible
+// Start-Up Event
+bot.once("ready", async () => {
+    console.log(`\nBot ist online.\nName + Tag: ${bot.user.username}#${bot.user.discriminator}\nPrefix: ${BotSettings.prefix}`);
+    bot.user.setStatus("dnd"); // online, idle, dnd, invisible
     bot.user.setActivity(`${BotSettings.prefix}help mit maggi`, {
-
-        type: "PLAYING" //PLAYING, STREAMING, LISTENING, WATCHING
-    })
-    //Name + Avatar
-    // bot.user.setUsername("Bendy")
-    // bot.user.setAvatar("")
+        type: "Playing", // Playing, Streaming, Listening, Watching
     });
+});
 
-    //Welcome Message
-   // bot.on("guildMemberAdd", async member => { 
-    //if(member.guild.id == `531971237103140879`) {
-    //bot.channels.get("557921976681758736").send(`${member} Willkommen auf dem ${member.guild.name} Server!`)
-
-    //}
-    
-    bot.on("guildMemberAdd", async member => { 
-    if(member.guild.id == `531971237103140879`) {
-    bot.channels.get("557921976681758736").send(` Willkommen ${member} auf dem ${member.guild.name} Server! Lese bitte die <#557922012186804243> durch`)
-
+// Welcome Message für neue Mitglieder
+bot.on("guildMemberAdd", async (member) => {
+    if (member.guild.id == `531971237103140879`) {
+        const channel = member.guild.channels.cache.get("557921976681758736");
+        if (channel) {
+            channel.send(`Willkommen ${member} auf dem ${member.guild.name} Server! Lese bitte die <#557922012186804243> durch`);
+        }
     }
-    });
+});
 
+// Message Handler
+bot.on("messageCreate", async (message) => {
+    // Ignoriere Bot-Nachrichten
+    if (message.author.bot) return;
 
-    bot.on("message", async message => {
+    // Prefix-Check
+    if (!message.content.startsWith(BotSettings.prefix)) return;
 
+    // Command und Args extrahieren
+    const args = message.content.slice(BotSettings.prefix.length).trim().split(/ +/);
+    const command = args.shift().toLowerCase();
 
-    //Schutz vor Bots
-    if (!message.author.bot) {
+    // SAY Command
+    if (command === "say") {
+        const sayMessage = args.join(" ");
+        if (!sayMessage) return message.reply("Bitte gib etwas ein zum Sagen!");
 
-    }   
+        await message.delete().catch(() => {});
+        message.channel.send(sayMessage);
+    }
 
+    // HELP Command
+    if (command === "help") {
+        const embed = new EmbedBuilder()
+            .setColor("#a658e5")
+            .setTitle("Hier siehst du alle Befehle des Bots")
+            .addFields(
+                { name: "Help", value: "Zeigt dir alle Befehle des Bots." },
+                { name: "botinfo", value: "Gib dir wichtige Informationen über den Bot." },
+                { name: "youtube", value: "Paar YouYuber die ich empfehle" },
+                { name: "würfel", value: "Du bekommst eine random Zahl." },
+                { name: "kick", value: 'Für diesen Befehl wird ein Channel mit dem Namen "kick" gebraucht\nDamit kannst du Mitglieder kicken.' },
+                { name: "ban", value: 'Für diesen Befehl wird ein Channel mit dem Namen "ban" gebraucht\nDamit kannst du Mitglieder bannen.' },
+                { name: "join", value: "Bot joined dem Voice Channel" },
+                { name: "disconnect", value: "Lässt den Bot disconnecten" },
+                { name: "ping", value: "Zeigt den Ping vom Bot an" },
+                { name: "pokemon", value: "Hier bekommst du Informationen über Pokemon" },
+                { name: "cookie", value: "Hier dein Cookie :cookie:" },
+                { name: "avatar", value: "Zeigt deinen Avatar" }
+            );
 
+        message.channel.send({ embeds: [embed] });
+    }
 
+    // PING Command
+    if (command === "ping") {
+        message.reply(`Pong! ${Math.round(bot.ws.ping)}ms`);
+    }
 
-        //Say-Command
-        if(command === `say`) {
+    // YOUTUBE Command
+    if (command === "youtube") {
+        const embed = new EmbedBuilder()
+            .setColor("#3999")
+            .setTitle("Hier sind paar Youtuber")
+            .addFields({ name: "Ikarusgaming", value: "[Kanal besuchen](https://www.youtube.com/@ikarusgaming)" });
 
-            // makes the bot say something and delete the message. As an example, it's open to anyone to use. 
-        
-            // To get the "message" itself we join the `args` back into a string with spaces: 
-        
-            const sayMessage = args.join(" ");
-        
-            // Then we delete the command message (sneaky, right?). The catch just ignores the error with a cute smiley thing.
-        
-            message.delete().catch(O_o=>{}); 
-        
-            // And we get the bot to say the thing: 
-        
-            message.channel.send(sayMessage);
-        
-          }
+        message.channel.send({ embeds: [embed] });
+    }
 
-        //Help
-        if (message.content == `${BotSettings.prefix}help`) {
-            var embed = new Discord.RichEmbed()
+    // WÜRFEL Command
+    if (command === "würfel") {
+        const random = ["1", "2", "3", "4", "5", "6"];
+        const chosen = random[Math.floor(Math.random() * random.length)];
+        message.channel.send(`🎲 Du hast eine **${chosen}** gewürfelt!`);
+    }
 
-                .setColor(`#a658e5`)
-                .setTitle("Hier siehst du alle Befehle des Bots")
-                .addField(`Help`, `Zeigt dir alle Befehle des Bots.`)
-                .addField(`botinfo`, `Gib dir wichtige Informationen über den Bot.`)
-                .addField(`youtube`,`sind paar youtuber die ${message.guild.member(BotSettings.OwnerID).user.username}#${message.guild.member(BotSettings.OwnerID3).user.discriminator}`)
-                .addField(`würfel`,`Du bekommst eine random Zahl.`)
-                .addField(`kick`,"Für diesen Befehl wird ein Channel mit dem Namen `kick` gebraucht\nDamit kannst du Mitglieder kicken.")
-                .addField(`ban`,"Für diesen Befehl wird ein Channel mit dem Namen `ban` gebraucht\nDamit kannst du Mitglieder bannen.")
-                .addField(`join`,`botjoint dem voice chanel`)
-                .addField(`dis`, `lässt den bot disconecten`)
-                .addField(`ping`,`zeigt den ping vom bot an`)
+    // BOTINFO Command
+    if (command === "botinfo") {
+        const createdAt = bot.user.createdAt;
+        const embed = new EmbedBuilder()
+            .setColor("#3999")
+            .setTitle(`Infos über ${bot.user.username}`)
+            .addFields(
+                { name: "Name", value: bot.user.username },
+                { name: "Besitzer", value: `<@${BotSettings.OwnerID}>` },
+                { name: "Prefix", value: BotSettings.prefix },
+                { name: "Geschrieben mit", value: "Javascript (discord.js v14)" },
+                { name: "Erstellt am", value: createdAt.toLocaleDateString("de-DE") },
+                { name: "Willst du mich adden?", value: "[Dann klick hier](https://discordapp.com/api/oauth2/authorize?client_id=525663532398673950&permissions=1238&scope=bot)" },
+                { name: "Sprachen", value: "Deutsch und Englisch" }
+            )
+            .setThumbnail(bot.user.displayAvatarURL());
 
-            message.channel.send(embed)
+        message.channel.send({ embeds: [embed] });
+    }
+
+    // EVAL Command (nur für Owner)
+    if (command === "eval") {
+        if (message.author.id !== BotSettings.OwnerID && message.author.id !== BotSettings.OwnerID2 && message.author.id !== BotSettings.OwnerID3) {
+            const evalmsg = await message.channel.send(`Nur der Entwickler darf diesen Befehl nutzen. ${message.author}`);
+            setTimeout(async () => {
+                await evalmsg.delete().catch(() => {});
+            }, 5000);
+            return;
         }
 
-        if(message.content == `${BotSettings.prefix}ping`) { message.channel.send(`Pong! ${Math.round(bot.ping)}ms`); }
+        const code = args.join(" ");
 
-        if(message.content == `${BotSettings.prefix}youtube`){
-            var embed = new Discord.RichEmbed()
-                 .setColor(`#3999`)
-                 .setTitle(`hier sind paar youtuber`)
-                 .addField(`[Ikarusgaming]()`)
-                 message.channel.send(embed)
-             }
-         
-            
-       if(message.content.includes == (`${BotSettings.prefix}würfel`)){  
-        let random =[`1`,`2`,`3`,`4`,`5`,`6`]
-           let chosen = random[Math.floor(Math.random()* random.length)];
-           message.channel.send(chosen)
-       }
-       
-       
-
-       if(message.content == `${BotSettings.prefix}botinfo`){
-           var embed = new Discord.RichEmbed()
-                .setColor(`#3999`)
-                .setTitle(`Infos über ${bot.user.username}`)
-                .addField(`Name`, `${bot.user.username}`)
-                .addField(`Besitzer`, `${message.guild.member(BotSettings.OwnerID).user.username}#${message.guild.member(BotSettings.OwnerID3).user.discriminator}`)
-                .addField(`Prefix`, `${BotSettings.prefix}`)
-                .addField(`geschrieben mit`, `Javascript`)
-                .addField(`Erstellt am`,`**${bot.user.createdAt.toString().split(" ")[2]}** ${BotSettings.Date_Name[bot.user.createdAt.toString().split(" ")[1]]}** **${bot.user.createdAt.toString().split(" ")[3]}`)
-                .addField(`Willst du mich adden?`,`[Dann klick hier](https://discordapp.com/api/oauth2/authorize?client_id=525663532398673950&permissions=1238&scope=bot) **du waschlappen**`)
-                .addField(`Sprachen`,`Deutsch und Englisch`)
-                .setThumbnail(bot.user.avatarURL)
-                message.channel.send(embed)
-            }
-
-
-
-            if(message.content.includes(`${BotSettings.prefix}würfel`)) {
-        
-                let random = [`1`,`2`,`3`,`4`,`5`,`6`]
-                let chosen = random[Math.floor(Math.random() * random.length)];
-    
-                message.channel.send(chosen)
-        
-            }
-            
-              
-              
-        //Eval
-        
-        if(message.content.startsWith(`${BotSettings.prefix}eval`)) {
-        if(message.author.id === BotSettings.OwnerID === true||BotSettings.OwnerID3 == true) {
-        let command = args.join(" ");
         function clean(text) {
-            if (typeof(text) === "string")
-              return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
-            else
-                return text;
-          } 
-         try {
-          let code = args.join(" ");
-          let evaled = eval(command);
-     
-          if (typeof evaled !== "string")
-            evaled = require("util").inspect(evaled);
-     
-          message.channel.send(clean(evaled), {code:"xl"});
+            if (typeof text === "string")
+                return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
+            else return text;
+        }
+
+        try {
+            let evaled = eval(code);
+
+            if (typeof evaled !== "string") evaled = require("util").inspect(evaled);
+
+            message.channel.send("```xl\n" + clean(evaled) + "\n```");
         } catch (err) {
-          message.channel.send(`\`ERROR\` \`\`\`xl\n${clean(err)}\n\`\`\``);
-          }              
-    } else {
-        let evalmsg= await message.channel.send(`Nur der Entwickler darf diesen Befehl nutzen. ${message.author}`)
-        setTimeout(async () => {evalmsg.delete()}, 5000)
-    }
-  } 
- 
-         
-if(message.content.startsWith(`${BotSettings.prefix}ban`)) {
-    if(message.author.id == BotSettings.OwnerID || message.member.hasPermission("KICK_MEMBERS")) {
-        let bUser = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
-
-        if(!bUser) return message.channel.send("Ich kann das Mitglied nicht finden :open_mouth: !");
-    
-        let bReason = args.join(" ").slice(22);
-    
-        if(!message.member.hasPermission("BAN_MEMBERS")) return message.channel.send("Du hast nicht die Berechtigung zum bannen. :right_facing_fist:");
-    
-        if(bUser.hasPermission("BAN_MEMBERS")) return message.channel.send("Ich kann das Mitglied nicht bannen! :sunglasses:");
-
-        let banEmbed = new Discord.RichEmbed()
-        .setDescription("~Ban~")
-        .setColor("#FF8300")
-        .addField("Gebannter User", `${bUser} mit der ID ${bUser.id}`)
-        .addField("Gebannt von", `${message.author} mit der ID ${message.author.id}`)
-        .addField("Gebannt in Channel", `${message.channel}`)
-        .addField("Zeit", `${message.createdAt}`)
-        .addField("Grund", `${bReason}`);
-    
-        let banChannel = message.guild.channels.find(`name`, "ban");
-    
-        if(!banChannel) return message.channel.send("Ich habe keinen Channel mit dem Namen `ban` gefunden. :cry:");
-        
-        message.guild.member(bUser).ban(bReason);
-    
-        banChannel.send(banEmbed);
-        return;
-    }i
-
-
-    
-
-  
-}
-
-  //Serverliste
-  if(message.content ==`${BotSettings.prefix}serverliste`) {
-
-    var embed = new Discord.RichEmbed()
-    .setColor("#80a1ad")
-    .setDescription(`Ich bin akutell auf **${bot.guilds.size}** Servern: \n \n${bot.guilds.map(members => members).join(",\n")}`)
-
-
-    message.channel.send(embed)
-}
-
-//Server-Verlassen
-if(message.content.startsWith(`${BotSettings.prefix}leave ${args.join(" ")}`)) {
-    if(message.author.id === BotSettings.OwnerID === true || message.author.id === BotSettings.OwnerID2 === true||BotSettings.OwnerID4 === true) {
-        bot.guilds.get(bot.guilds.find('name',args.join(" ")).id).leave()
-        message.channel.send(`Ich habe den Server **${args.join(" ")}** verlassen.`)
-    } else {
-        message.channel.send(`Nur der Entwickler kann diesen Befehl nutzen. ${message.author}`)
-    }  
-} 
-
-
- if(message.content == `${BotSettings.prefix}pokemon` ){
-    message.channel.send(`hier bekommst du informationen über pokemon https://www.pokewiki.de/`)
- }
- if(message.content.startsWith(`${BotSettings.prefix}kick`)) {
-    if(message.author.id == BotSettings.OwnerID || message.member.hasPermission("KICK_MEMBERS")) {
-    
-        let kUser = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
-    
-        if(!kUser) return message.channel.send("ich kann das mitglid nicht finden :open_mouth: !");
-    
-        let kReason = args.join(" ").slice(22);
-    
-        if(!message.member.hasPermission("KICK_MEMBERS")) return message.channel.send("Du hast nicht die Berechtigung zum kicken. :right_facing_fist:");
-    
-        if(kUser.hasPermission("KICK_MEMBERS")) return message.channel.send("Ich kann das Mitglied nicht kicken! :sunglasses:");
-    
-    
-        let kickEmbed = new Discord.RichEmbed()
-        .setDescription("~Kick~")
-        .setColor("#FF8300")
-        .addField("Gekickter User", `${kUser} mit der ID ${kUser.id}`)
-        .addField("Gekickt von", `${message.author} mit der ID ${message.author.id}`)
-        .addField("Gekickt in Channel",` ${message.channel}`)
-        .addField("Zeit", `${message.createdAt}`)
-        .addField("Grund", `${kReason}`);
-    
-        let kickChannel = message.guild.channels.find(`name`, "kick");
-    
-        if(!kickChannel) return message.channel.send("Ich habe keinen Channel mit dem Namen ´kick´ gefunden. :cry:");
-    
-        message.guild.member(kUser).kick(kReason);
-    
-        kickChannel.send(kickEmbed);
-        return;
-    }
+            message.channel.send("`ERROR` ```xl\n" + clean(err) + "\n```");
+        }
     }
 
-    if (message.content == `${BotSettings.prefix}cookie`){
-    message.delete()
-    message.channel.send(`${message.author} hier dein :cookie:`)
-}
+    // BAN Command
+    if (command === "ban") {
+        if (message.author.id !== BotSettings.OwnerID && !message.member.permissions.has(PermissionFlagsBits.BanMembers)) {
+            return message.reply("Du hast nicht die Berechtigung zum Bannen.");
+        }
 
-if (message.content == `${BotSettings.prefix}doggy`){
-    message.delete()
-    let pervers = await message.channel.send(`${message.author} nein Böse :rage:`)
-    setTimeout(async () => {pervers.delete()}, 2000)
-    message.member.send(`${message.author}, Du Lustmolch :P`)
-}
+        const bUser = message.mentions.members.first() || (await message.guild.members.fetch(args[0]).catch(() => null));
 
-if(message.content == `${BotSettings.prefix}hentai`){
-    message.delete()
-    let random = [`https://giphy.com/gifs/pokemon-E5l7QZaiptXI4`,`https://giphy.com/gifs/bulbasaur-heracross-omg-no-4dtoB7hISQN9e`,`https://giphy.com/gifs/pokemon-things-stuff-qLVRVilkeG4Ug`,``]
-    let chosen = random[Math.floor(Math.random() * random.length)];
+        if (!bUser) return message.reply("Ich kann das Mitglied nicht finden! :open_mouth:");
 
-    message.channel.send(chosen)
+        const bReason = args.slice(1).join(" ") || "Kein Grund angegeben";
 
-}
-if(message.content == `${BotSettings.prefix}avatar`){
-message.author(`${userinfo.avatarURL()}`)
-}
-if(message.content == `${BotSettings.prefix}test`){
-    message.delete()
-    message.reply(`test fehlgeschlagen`)
-}
+        if (!message.member.permissions.has(PermissionFlagsBits.BanMembers)) {
+            return message.reply("Du hast nicht die Berechtigung zum Bannen!");
+        }
 
-if(message.content==`${BotSettings.prefix}shut up`){
-    message.channel.send(`HALTS MAUL :rage:`)
+        if (bUser.permissions.has(PermissionFlagsBits.BanMembers)) {
+            return message.reply("Ich kann das Mitglied nicht bannen! :sunglasses:");
+        }
 
-}
+        const banEmbed = new EmbedBuilder()
+            .setDescription("~Ban~")
+            .setColor("#FF8300")
+            .addFields(
+                { name: "Gebannter User", value: `${bUser} mit der ID ${bUser.id}` },
+                { name: "Gebannt von", value: `${message.author} mit der ID ${message.author.id}` },
+                { name: "Gebannt in Channel", value: `${message.channel}` },
+                { name: "Zeit", value: new Date().toLocaleString("de-DE") },
+                { name: "Grund", value: bReason }
+            );
 
-if(command == `${BotSettings.prefix}ping`) {
+        const banChannel = message.guild.channels.cache.find((ch) => ch.name === "ban" && ch.type === ChannelType.GuildText);
 
-    message.channel.send(`Pong! **${Math.round(client.ping)}**ms`);
+        if (!banChannel) return message.reply("Ich habe keinen Channel mit dem Namen `ban` gefunden!");
 
-}
+        await bUser.ban({ reason: bReason }).catch((err) => {
+            message.reply("Fehler beim Bannen: " + err.message);
+        });
 
-if(message.content == `${BotSettings.pref}schokolade`){
-    message.delete()
-    message.channel.send(`hier deine :chocolate_bar:`)
+        banChannel.send({ embeds: [banEmbed] });
+    }
 
-}
-if(message.content == `${BotSettings.prefix}Hallo`){
-    message.send(`hallo`)
-}
-});bot.login(process.env.BOT_TOKEN)
+    // KICK Command
+    if (command === "kick") {
+        if (message.author.id !== BotSettings.OwnerID && !message.member.permissions.has(PermissionFlagsBits.KickMembers)) {
+            return message.reply("Du hast nicht die Berechtigung zum Kicken.");
+        }
+
+        const kUser = message.mentions.members.first() || (await message.guild.members.fetch(args[0]).catch(() => null));
+
+        if (!kUser) return message.reply("Ich kann das Mitglied nicht finden! :open_mouth:");
+
+        const kReason = args.slice(1).join(" ") || "Kein Grund angegeben";
+
+        if (!message.member.permissions.has(PermissionFlagsBits.KickMembers)) {
+            return message.reply("Du hast nicht die Berechtigung zum Kicken!");
+        }
+
+        if (kUser.permissions.has(PermissionFlagsBits.KickMembers)) {
+            return message.reply("Ich kann das Mitglied nicht kicken! :sunglasses:");
+        }
+
+        const kickEmbed = new EmbedBuilder()
+            .setDescription("~Kick~")
+            .setColor("#FF8300")
+            .addFields(
+                { name: "Gekickter User", value: `${kUser} mit der ID ${kUser.id}` },
+                { name: "Gekickt von", value: `${message.author} mit der ID ${message.author.id}` },
+                { name: "Gekickt in Channel", value: `${message.channel}` },
+                { name: "Zeit", value: new Date().toLocaleString("de-DE") },
+                { name: "Grund", value: kReason }
+            );
+
+        const kickChannel = message.guild.channels.cache.find((ch) => ch.name === "kick" && ch.type === ChannelType.GuildText);
+
+        if (!kickChannel) return message.reply("Ich habe keinen Channel mit dem Namen `kick` gefunden!");
+
+        await kUser.kick(kReason).catch((err) => {
+            message.reply("Fehler beim Kicken: " + err.message);
+        });
+
+        kickChannel.send({ embeds: [kickEmbed] });
+    }
+
+    // SERVERLISTE Command
+    if (command === "serverliste") {
+        const serverList = bot.guilds.cache.map((guild) => guild.name).join(", ");
+        const embed = new EmbedBuilder()
+            .setColor("#80a1ad")
+            .setDescription(`Ich bin aktuell auf **${bot.guilds.cache.size}** Servern: \n \n${serverList}`);
+
+        message.channel.send({ embeds: [embed] });
+    }
+
+    // LEAVE Command (nur für Owner)
+    if (command === "leave") {
+        if (message.author.id !== BotSettings.OwnerID && message.author.id !== BotSettings.OwnerID2) {
+            return message.reply("Nur der Entwickler kann diesen Befehl nutzen.");
+        }
+
+        const guildName = args.join(" ");
+        const guild = bot.guilds.cache.find((g) => g.name === guildName);
+
+        if (!guild) return message.reply("Ich konnte diesen Server nicht finden!");
+
+        await guild.leave();
+        message.channel.send(`Ich habe den Server **${guildName}** verlassen.`);
+    }
+
+    // POKEMON Command
+    if (command === "pokemon") {
+        message.channel.send("Hier bekommst du Informationen über Pokemon: https://www.pokewiki.de/");
+    }
+
+    // COOKIE Command
+    if (command === "cookie") {
+        await message.delete().catch(() => {});
+        message.channel.send(`${message.author} hier dein :cookie:`);
+    }
+
+    // DOGGY Command
+    if (command === "doggy") {
+        await message.delete().catch(() => {});
+        const pervers = await message.channel.send(`${message.author} nein Böse :rage:`);
+        setTimeout(async () => {
+            await pervers.delete().catch(() => {});
+        }, 2000);
+        await message.author.send(`${message.author}, Du Lustmolch :P`).catch(() => {});
+    }
+
+    // HENTAI Command
+    if (command === "hentai") {
+        await message.delete().catch(() => {});
+        const random = [
+            "https://giphy.com/gifs/pokemon-E5l7QZaiptXI4",
+            "https://giphy.com/gifs/bulbasaur-heracross-omg-no-4dtoB7hISQN9e",
+            "https://giphy.com/gifs/pokemon-things-stuff-qLVRVilkeG4Ug",
+        ];
+        const chosen = random[Math.floor(Math.random() * random.length)];
+        message.channel.send(chosen);
+    }
+
+    // AVATAR Command
+    if (command === "avatar") {
+        const user = message.mentions.users.first() || message.author;
+        message.channel.send(user.displayAvatarURL({ size: 1024, dynamic: true }));
+    }
+
+    // TEST Command
+    if (command === "test") {
+        await message.delete().catch(() => {});
+        message.reply("Test fehlgeschlagen");
+    }
+
+    // SHUT UP Command
+    if (message.content.toLowerCase().includes(`${BotSettings.prefix}shut up`)) {
+        message.channel.send("HALTS MAUL :rage:");
+    }
+
+    // SCHOKOLADE Command
+    if (command === "schokolade") {
+        await message.delete().catch(() => {});
+        message.channel.send("Hier deine :chocolate_bar:");
+    }
+
+    // HALLO Command
+    if (command === "hallo") {
+        message.reply("Hallo!");
+    }
+});
+
+// Bot Login
+bot.login(process.env.BOT_TOKEN);
